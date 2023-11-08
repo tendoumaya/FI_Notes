@@ -1,0 +1,15 @@
+model tutorial_2
+uses "mmxprs";
+
+
+declarations
+
+end-declarations
+
+
+
+writeln("Begin running model")
+
+writeln("End running model")
+
+end-model

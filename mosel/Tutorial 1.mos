@@ -1,0 +1,67 @@
+!@encoding CP936
+model tutorial_1
+uses "mmxprs"; !gain access to the Xpress-Optimizer solver
+
+!sample declarations section
+declarations
+! ...
+  ITEMS = 1..30
+  prices: array(ITEMS) of real
+  quantities: array(ITEMS) of mpvar
+  names: array(ITEMS) of string
+
+end-declarations
+
+prices::[1.00, 1.00,
+	10.00, 2.00,
+	1.50, 1.00,
+	3.50, 0.50,
+	1.50, 1.50,
+	1.00, 0.50,
+	5.00, 1.00,
+	1.00, 2.00,
+	2.50, 1.00,
+	2.50, 1.00,
+	5.00, 2.00,
+	2.00, 2.00,
+	1.00, 3.00,
+	1.00, 2.00,
+	2.50, 1.75]
+names::["pack of 8 medium sized red apples", "500 g pasta",
+	"24 toilet rolls", "1 kg rooster potatoes",
+	"500 g white sugar", "200 g cherry tomatoes",
+	"200 g instant coffee", "tinned tomatoes (400 cl)", 
+	"Cauliflower", "tinned vegetable soup (375 cl)",
+	"1kg bag of carrots", "tinned chickpeas (250 g)",
+	"1.2kg chicken", "1 kg porridge oatmeal flakes", 
+	"1 l milk", "350 cl antibacterial hand wash",
+	"200 g block cheddar", "100 g jar of stuffed olives",
+	"500 g easy cook rice", "bar of dark chocolate (100g)",
+	"500 g striploin steak", "Sliced pan brown bread (800g)",
+	"1 kg plain flour", "Sliced pan white bread (800g)",
+	"1 kg onions", "Box of 100 tea bags (black)",
+	"300 g button mushrooms", "Box of 20 tea bags (green)",
+	"Packet green lentils (500 g)", "Bunch bananas"]
+
+items:= sum(i in ITEMS) quantities(i)
+cost:= sum(i in ITEMS) quantities(i)*prices(i) <= 20
+
+forall(i in ITEMS) quantities(i) <= 3
+
+forall(i in ITEMS) quantities(i) is_integer
+
+maximize(items)
+
+writeln("Begin running model")
+!...
+writeln("Total ", getobjval, " items")
+forall(i in ITEMS) do
+  if getsol(quantities(i))<>0 then writeln(getsol(quantities(i)), " ", names(i), " ",getsol(quantities(i))*prices(i))
+  end-if
+end-do
+
+writeln("Cost ", sum(i in ITEMS) getsol(quantities(i))*prices(i), " Euro")
+  
+writeln("End running model")
+
+end-model
